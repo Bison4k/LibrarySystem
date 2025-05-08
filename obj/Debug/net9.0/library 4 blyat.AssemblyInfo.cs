@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("library 4 blyat")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d3cbee74944ef8e155e7b3236653543f723145f9")]
 [assembly: System.Reflection.AssemblyProductAttribute("library 4 blyat")]
 [assembly: System.Reflection.AssemblyTitleAttribute("library 4 blyat")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,4 +1,6 @@
 ﻿using library_4_blyat.Models;
+using library_4_blyat.Services; 
+
 
 namespace library_4_blyat;
 
@@ -6,18 +8,19 @@ public class Program
 {
     static void Main()
     {
-        var lib = new Library();
+        var lib = new LibraryLogic();
         
-        // добавляем id книг 
-        var id1 = Guid.NewGuid();
-        var id2 = Guid.NewGuid();
-        var id3 = Guid.NewGuid();
+        var book1 = new Book("1984", "George Orwell", 1949);
+        var book2 = new Book("Brave New World", "Aldous Huxley", 1932);
+        var book3 = new Book("Animal Farm", "George Orwell", 1945);
         
-        // добавляем книги 
-        lib.AddBook(new Book(id1, "1984", "George Orwell", 1949));
-        lib.AddBook(new Book(id2, "Brave New World", "Aldous Huxley", 1932));
-        lib.AddBook(new Book(id3, "Animal Farm", "George Orwell", 1945));
+        var id1 = book1.Id;
+        var id2 = book2.Id;
+        var id3 = book3.Id;
         
+        lib.AddBook(book1);
+        lib.AddBook(book2);
+        lib.AddBook(book3);
         
         // регистрируем пользователей 
         lib.RegisterUser(new User("Vlad"));

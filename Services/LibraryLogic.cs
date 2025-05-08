@@ -1,29 +1,35 @@
 using library_4_blyat.Models;
-
+using System.Linq;
 namespace library_4_blyat.Services;
 
 public class LibraryLogic
 {
     private readonly Library _library = new();
-    private readonly Dictionary<string, Guid> _userBooks = new(); // => (userName,  guid => book id)
+    private readonly Dictionary<string, List<Guid>> _userBooks = new(); // что бы пользователь мог брать несколько книг 
 
-    public IReadOnlyList<Book> LibraryBooks => _library.Books; 
+    public IReadOnlyList<Book> LibraryBooks => _library.Books;
     
     public void AddBook(Book book)
     {
-        if (_library.Books.TryAdd(book.Id, book))
+        if (_library.Books.All(b=>b.Id != book.Id))
         {
+            _library.Books.Add(book);
             Console.WriteLine($"Book {book.Title} added");
+        }
+        else
+        {
+            Console.WriteLine($"Book {book.Title} already exists");
         }
     }
 
     public void RemoveBook(Guid id)
     {
-        if (books.TryGetValue(id, out var book))
+        var book = _library.Books.FirstOrDefault(b => b.Id == id);
+        if (book != null)
         {
             if (book.IsAvailable)
             {
-                books.Remove(id);
+                _library.Books.Remove(book);
                 Console.WriteLine($"Book {book.Title} removed");
             }
             else
@@ -35,12 +41,14 @@ public class LibraryLogic
 
     public List<Book> FindBooks(string keyword)
     {
-        return books.Values.Where(b => b.Title.Contains(keyword) || b.Author.Contains(keyword)).ToList();
+        return _library.Books
+            .Where(b => b.Title.Contains(keyword) || b.Author.Contains(keyword))
+            .ToList();
     }
 
     public void PrintBooksGroupedByAuthor()
     {
-        var orderedGroups = books.Values
+        var orderedGroups = _library.Books
             .GroupBy(b => b.Author)
             .OrderBy(g => g.Key);
 
@@ -57,46 +65,70 @@ public class LibraryLogic
 
     public void RegisterUser(User user)
     {
-        if (users.TryAdd(user.Name, user))
+        if (_library.Users.All(u=>u.Name != user.Name))
         {
+            _library.Users.Add(user);
             Console.WriteLine($"User {user.Name} registered");
-            return;
         }
-
-        Console.WriteLine($"{user.Name} уже в библиотеке, анлаки(");
+        else
+        {
+            Console.WriteLine($"User {user.Name} already exists");
+        }
     }
 
     public void BorrowBook(string username, Guid bookId)
     {
-        if (users.TryGetValue(username, out var user) && books.TryGetValue(bookId, out var book))
+        var user = _library.Users.FirstOrDefault(u => u.Name == username);
+        var book = _library.Books.FirstOrDefault(b => b.Id == bookId);
+        
+        if (user !=null && book != null)
         {
-            if (book.IsAvailable)
+            if (!book.IsAvailable)
             {
-                user.BorrowedBooks[bookId] = book;
-                book.IsAvailable = false;
-                Console.WriteLine($"{username} borrowed: {book.Title}");
+                Console.WriteLine($"Book {book.Title} already exists");
+                return;
             }
-            else
+
+            if (!_userBooks.ContainsKey(username))
             {
-                Console.WriteLine($"User {username} cannot be borrowed, book is not available");
+                _userBooks[username] = new List<Guid>();
             }
+
+            if (_userBooks[username].Contains(book.Id))
+            {
+                Console.WriteLine($"{username} already borrowed {book.Title} ");
+                return;
+            }
+            
+            user.BorrowedBooks[bookId] = book; 
+            book.IsAvailable = false;
+            _userBooks[username].Add(book.Id);
+            
+            Console.WriteLine($"{username} borrowed: {book.Title}");
         }
     }
 
     public void ReturnBook(string userName, Guid bookId)
     {
-        if (users.TryGetValue(userName, out var user) 
-            && books.TryGetValue(bookId, out var book) 
-            && user.BorrowedBooks.Remove(bookId))
+        var user = _library.Users.FirstOrDefault(u => u.Name == userName);
+        var book = _library.Books.FirstOrDefault(b => b.Id == bookId);
+
+        if (user != null && book != null && user.BorrowedBooks.Remove(book.Id))
         {
             book.IsAvailable = true;
-            Console.WriteLine($"{userName} returned {book.Title}");
+
+            if (!_userBooks.ContainsKey(userName))
+            {
+                _userBooks[userName].Remove(bookId);
+            }
+            Console.WriteLine($"{userName} return: {book.Title}");
         }
     }
 
     public void PrintUserBooks(string username)
     {
-        if (users.TryGetValue(username, out var user))
+        var user = _library.Users.FirstOrDefault(u => u.Name == username);
+        if (user != null)
         {
             Console.WriteLine($"Books borrowed by '{username}' ");
 

@@ -12,3 +12,4 @@ C:\Users\vkiya\RiderProjects\library 4 blyat\library 4 blyat\obj\Debug\net9.0\re
 C:\Users\vkiya\RiderProjects\library 4 blyat\library 4 blyat\obj\Debug\net9.0\library 4 blyat.pdb
 C:\Users\vkiya\RiderProjects\library 4 blyat\library 4 blyat\obj\Debug\net9.0\library 4 blyat.genruntimeconfig.cache
 C:\Users\vkiya\RiderProjects\library 4 blyat\library 4 blyat\obj\Debug\net9.0\ref\library 4 blyat.dll
+C:\Users\vkiya\RiderProjects\library 4 blyat\library 4 blyat\obj\Debug\net9.0\library 4 blyat.sourcelink.json
